@@ -124,8 +124,6 @@ try {
                 // Export for web
                 document.exportDocument(outputFile,ExportType.SAVEFORWEB, exportOpt);
             }
-            // Brighten users day
-            alert("You're looking amazing today \n Your files are done!");
             // Close File
             document.close(SaveOptions.DONOTSAVECHANGES);
         }
@@ -140,6 +138,8 @@ try {
     }
 
     finally {
+        // Brighten users day
+        alert("You're looking amazing today!");
         // Reset preferrances
         app.preferances.rulerUnits = startRulerUnits;
     }
