@@ -3,7 +3,12 @@ var FILE_TYPE   = ".tif",
     SEARCH_MASK = "*" + FILE_TYPE;
 
 
-// Set to pixels
+// Save current dialog preferences
+var startDisplayDialogs = app.displayDialogs;
+var startRulerUnits = app.preferences.rulerUnits;
+
+// Don't display dialogs, and set the units used to be pixels
+app.displayDialogs = DialogModes.NO;
 app.preferences.rulerUnits = Units.PIXELS;
 
 // Setup the array of folder names
@@ -46,100 +51,79 @@ var folders = [
 	},
     {
         'name': 'hybris',
-        'width': 2350,
+        'width': 2250,
         'heigh': 3000
     }
 ];
 
+
 try {
     // Ask for folder
     var inputFolder = Folder.selectDialog("Select a folder to process (test)");
+    
     // Throw an err if user is an idiot
     if (inputFolder === null) {
-        throw "No Folder Selected";
+        throw new Error("These aren't the files we're looking for...");
     }
     
     // Make selected folder curernt
     Folder.current = inputFolder;
 
     // Get all files from input folder
-    var fileList = inputFolder.getFiles(SEARCH_MASK),
-        fileListLength = fileList.length;
+    var fileList = inputFolder.getFiles(SEARCH_MASK);
 
     // Loop through all files
-    for (var i = 0; i < fileListLength; i++){
-        // Remove suffix
-        var fileName = fileList[i].name.toLowerCase().replace(/\..+$/, '');
-        
-        var folderName = fileName;
-        
-        // Create folder from fileName 
-        var newFolder = new Folder(folderName);
-        
-        // If folder exists, alert
-        if(!newFolder.exists){ 
-            newFolder.create();
-        } else {
-            alert("Folder " + folderName + " exists");
-        }
-        
-        // Count through amount of imgs
-        var imgCount = folders.length;
-        
-        // Make sub directory from folders array loop
-        for( var j = 0; j < imgCount; j++){
-            var subFolder = new Folder ( newFolder + "/" + folders[j].name);
-            
-            if (!subFolder.exists){
-                subFolder.create();
-            } else {
-                throw "Could not create sub folder. Sub folder already exists";                
-            }
-            
-            // Open files for Photoshop
-            var document = open(fileList[i]);
-            
-            if (document == null){
-                throw "Failed to open file, unsure why";
-            } else {
-                
-                // Do the stuff to the files
-                
-                document.resizeImage(folders[j].width, folders[j].height);
-                document.flatten();
-                
-                var dupe = document.activeLayer.duplicate();
-                dupe.applyUnSharpMask(40,1,0);
-                
-                var outputFile = new File( subFolder + "/" + fileName + '.jpg');        
-                var exportOpt = new ExportOptionsSaveForWeb();
-                
-                exportOpt.format = SaveDocumentType.JPEG;
-                exportOpt.optimized = false;
-                exportOpt.quality = 60;
-                exportOpt.interlaced = true;
-                exportOpt.includeProfile = false;
-                exportOpt.blur = 0;
-                
-                // Export for web
-                document.exportDocument(outputFile,ExportType.SAVEFORWEB, exportOpt);
-            }
-            // Close File
-            document.close(SaveOptions.DONOTSAVECHANGES);
-        }
-    }
+    for (var i = 0; i < fileList.length; i++){
+        // Get file's name 
+        var fileName = fileList[i].name.toUpperCase().replace(/\..+$/, '');  
+
+        // Removes suffix and sets folder name to file name.
+        var folder_name = ""
+		if(fileName.indexOf('_') >= 0){
+			folder_name = fileName.toUpperCase().substring( 0, fileName.indexOf( "_" ) );
+		} else {
+			folder_name = fileName.toUpperCase();
+		}					
+        // Create folder to contain output
+        var newFolder = new Folder(folder_name);
+
+        // If Folder doesn't exist, create it
+      	if(!newFolder.exists){ newFolder.create(); }
+
+      	// If folder doesn't exist despite it should have been,
+      	// throw error
+      	if(!newFolder.exists){
+      		throw new Error("Folder could not be created");
+      	} else {
+      		
+      		for(var j = 0; j < folders.length; j++){
+      			// Create sub folder
+      			var subFolder = new Folder(newFolder + "/" + folders[j].name);
+
+      			// Create Sub Folder if it doesn't exist
+      			if(!subFolder.exists){ subFolder.create(); }
+
+      			// If sub folder wasn't created, throw err
+      			if(!subFolder.exists){
+      				throw new Error("Something Happened");
+      			} else {
+      				// Open document
+      				var doc = open(fileList[i]);
+      			}
+      		}
+        } 
+	}
 }
 
-
-    catch (exception) {
-        
+catch (err) {
         // Catch them pesky errors
-        alert(exception);
-    }
+        alert("Houston, we've had a problem" + ": " + err.message);
+}
 
-    finally {
+finally {
         // Brighten users day
-        alert("You're looking amazing today!");
-        // Reset preferrances
-        app.preferances.rulerUnits = startRulerUnits;
+        //alert("You're looking amazing today!");
+		// Restore application preferences
+		app.displayDialogs = startDisplayDialogs;
+		app.preferences.rulerUnits = startRulerUnits;	
     }
