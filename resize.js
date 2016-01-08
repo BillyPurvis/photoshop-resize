@@ -157,7 +157,7 @@ catch (err) {
 
 finally {
         // Brighten users day
-        //alert("You're looking amazing today!");
+        alert("You're looking amazing, enjoy the day!");
         // Restore application preferences
         app.displayDialogs = startDisplayDialogs;
         app.preferences.rulerUnits = startRulerUnits;   
