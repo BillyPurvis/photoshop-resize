@@ -18,3 +18,24 @@
 - Split up !if statement for clarity. 
 - Corrected issue where sub folders wouldn't go into the top level folder because
   the for loop wasn't correctly nested
+
+
+
+
+
+
+
+
+
+
+TO DO
+============
+
+- Crop Hybris to correct width
+
+- Marketing 3000 x 3000 x 300 DPI (ONLY DEFAULT IMAGE).
+
+- Sliver needs to use _9 file only. 
+
+- Sliver for Hybris needs to be renamed from _9 to _colorswatch. 
+
