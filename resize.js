@@ -97,56 +97,56 @@ try {
             throw new Error("Folder could not be created");
         } else {
             
-            for(var j = 0; j < folders.length; j++){
-                // Create sub folder
-                var subFolder = new Folder(newFolder + "/" + folders[j].name);
+              for(var j = 0; j < folders.length; j++){
+                  // Create sub folder
+                  var subFolder = new Folder(newFolder + "/" + folders[j].name);
 
-                // Create Sub Folder if it doesn't exist
-                if(!subFolder.exists){ subFolder.create(); }
+                  // Create Sub Folder if it doesn't exist
+                  if(!subFolder.exists){ subFolder.create(); }
 
-                // If sub folder wasn't created, throw err
-                if(!subFolder.exists){
-                    throw new Error("Something Happened");
-                } else {
-                    // Open document
-                    var doc = open(fileList[i]);
+                  // If sub folder wasn't created, throw err
+                  if(!subFolder.exists){
+                      throw new Error("Something Happened");
+                  } else {
+                      // Open document
+                      var doc = open(fileList[i]);
 
-              // Throw err if doc is bad
-              if(doc == null){
-                throw new Error(fileName + " Failed to properly open. Try again.");
-              } else {
-                  // Resize The image
-                  doc.resizeImage(folders[j].width, folders[j].height);
-                  doc.flatten();
+                      // Throw err if doc is bad
+                      if(doc == null){
+                        throw new Error(fileName + " Failed to properly open. Try again.");
+                      } else {
+                          // Resize The image
+                          doc.resizeImage(folders[j].width, folders[j].height);
+                          doc.flatten();
 
-                  // Add UnSharpMask
-                  var duplicate = doc.activeLayer.duplicate();
-                      duplicate.applyUnSharpMask(40,1,0);
+                          // Add UnSharpMask
+                          var duplicate = doc.activeLayer.duplicate();
+                              duplicate.applyUnSharpMask(40,1,0);
 
-                  // Export for web
-                  var output = new File(subFolder + "/" + fileName.toUpperCase() + '.jpg');
+                          // Export for web
+                          var output = new File(subFolder + "/" + fileName.toUpperCase() + '.jpg');
 
-                  // Create var for save Options
-                  var exportOptionsSaveForWeb = new ExportOptionsSaveForWeb();
+                          // Create var for save Options
+                          var exportOptionsSaveForWeb = new ExportOptionsSaveForWeb();
 
-                  exportOptionsSaveForWeb.format          = SaveDocumentType.JPEG;
-                  exportOptionsSaveForWeb.optimized       = false;
-                  exportOptionsSaveForWeb.quality         = 60;
-                  exportOptionsSaveForWeb.interlaced      = true;
-                  exportOptionsSaveForWeb.includeProfile  = false;
-                  exportOptionsSaveForWeb.blur            = 0;
+                          exportOptionsSaveForWeb.format          = SaveDocumentType.JPEG;
+                          exportOptionsSaveForWeb.optimized       = false;
+                          exportOptionsSaveForWeb.quality         = 60;
+                          exportOptionsSaveForWeb.interlaced      = true;
+                          exportOptionsSaveForWeb.includeProfile  = false;
+                          exportOptionsSaveForWeb.blur            = 0;
 
-                  // Export options with arguments
-                  doc.exportDocument(output, ExportType.SAVEFORWEB, exportOptionsSaveForWeb); 
+                          // Export options with arguments
+                          doc.exportDocument(output, ExportType.SAVEFORWEB, exportOptionsSaveForWeb); 
 
-                  // Remove duplicate layer
-                  duplicate.remove();
+                          // Remove duplicate layer
+                          duplicate.remove();
+                      }
+                  }
               }
-                }
-            }
-          // Close the file outside ready to re-run loop to open the next file
-          doc.close(SaveOptions.DONOTSAVECHANGES);
-        } 
+              // Close the file outside ready to re-run loop to open the next file
+              doc.close(SaveOptions.DONOTSAVECHANGES);
+          } 
      }
 }
 
