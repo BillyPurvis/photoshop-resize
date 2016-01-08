@@ -13,47 +13,47 @@ app.preferences.rulerUnits = Units.PIXELS;
 
 // Setup the array of folder names
 var folders = [
-	{	'name' : 'zoom',
-		'width' : 1500,
-		'height' : 1500
-	},
-	{	'name' : 'thumb',
-		'width' : 90,
-		'height' : 90
-	},
-	{ 	'name' : 'product',
-		'width' : 480,
-		'height' : 480
-	},
-	{	'name' : 'optional',
-		'width' : 60,
-		'height' : 60
-	},
-	{	'name' : 'medium',
-		'width' : 116,
-		'height' : 116
-	},
-	{	'name' : 'checkout_thumb',
-		'width' : 70,
-		'height' : 70
-	},
-	{	'name' : 'additional',
-		'width' : 230,
-		'height' : 230
-	},
-	{	'name' : 'marketing',
-		'width' : 2000,
-		'height' : 2000
-	},
-	{	'name' : 'sliver',
-		'width' : 20,
-		'height' : 20
-	},
-    {
+    {   'name' : 'zoom',
+        'width' : 1500,
+        'height' : 1500
+    },
+    {   'name' : 'thumb',
+        'width' : 90,
+        'height' : 90
+    },
+    {   'name' : 'product',
+        'width' : 480,
+        'height' : 480
+    },
+    {   'name' : 'optional',
+        'width' : 60,
+        'height' : 60
+    },
+    {   'name' : 'medium',
+        'width' : 116,
+        'height' : 116
+    },
+    {   'name' : 'checkout_thumb',
+        'width' : 70,
+        'height' : 70
+    },
+    {   'name' : 'additional',
+        'width' : 230,
+        'height' : 230
+    },
+    {   'name' : 'marketing',
+        'width' : 2000,
+        'height' : 2000
+    },
+    {   'name' : 'sliver',
+        'width' : 20,
+        'height' : 20
+    },
+  {
         'name': 'hybris',
         'width': 2250,
         'heigh': 3000
-    }
+  }
 ];
 
 
@@ -78,41 +78,76 @@ try {
         var fileName = fileList[i].name.toUpperCase().replace(/\..+$/, '');  
 
         // Removes suffix and sets folder name to file name.
-        var folder_name = ""
-		if(fileName.indexOf('_') >= 0){
-			folder_name = fileName.toUpperCase().substring( 0, fileName.indexOf( "_" ) );
-		} else {
-			folder_name = fileName.toUpperCase();
-		}					
+        var folder_nam
+        e = ""
+              if(fileName.indexOf('_') >= 0){
+                   folder_name = fileName.toUpperCase().substring( 0, fileName.indexOf( "_" ) );
+            } else {
+                folder_name = fileName.toUpperCase();
+            }                   
         // Create folder to contain output
         var newFolder = new Folder(folder_name);
 
         // If Folder doesn't exist, create it
-      	if(!newFolder.exists){ newFolder.create(); }
+        if(!newFolder.exists){ newFolder.create(); }
 
-      	// If folder doesn't exist despite it should have been,
-      	// throw error
-      	if(!newFolder.exists){
-      		throw new Error("Folder could not be created");
-      	} else {
-      		
-      		for(var j = 0; j < folders.length; j++){
-      			// Create sub folder
-      			var subFolder = new Folder(newFolder + "/" + folders[j].name);
+        // If folder doesn't exist despite it should have been,
+        // throw error
+        if(!newFolder.exists){
+            throw new Error("Folder could not be created");
+        } else {
+            
+            for(var j = 0; j < folders.length; j++){
+                // Create sub folder
+                var subFolder = new Folder(newFolder + "/" + folders[j].name);
 
-      			// Create Sub Folder if it doesn't exist
-      			if(!subFolder.exists){ subFolder.create(); }
+                // Create Sub Folder if it doesn't exist
+                if(!subFolder.exists){ subFolder.create(); }
 
-      			// If sub folder wasn't created, throw err
-      			if(!subFolder.exists){
-      				throw new Error("Something Happened");
-      			} else {
-      				// Open document
-      				var doc = open(fileList[i]);
-      			}
-      		}
+                // If sub folder wasn't created, throw err
+                if(!subFolder.exists){
+                    throw new Error("Something Happened");
+                } else {
+                    // Open document
+                    var doc = open(fileList[i]);
+
+              // Throw err if doc is bad
+              if(doc == null){
+                throw new Error(fileName + " Failed to properly open. Try again.");
+              } else {
+                  // Resize The image
+                  doc.resizeImage(folders[j].width, folders[j].height);
+                  doc.flatten();
+
+                  // Add UnSharpMask
+                  var duplicate = doc.activeLayer.duplicate();
+                      duplicate.applyUnSharpMask(40,1,0);
+
+                  // Export for web
+                  var output = new File(subFolder + "/" + fileName.toUpperCase() + '.jpg');
+
+                  // Create var for save Options
+                  var exportOptionsSaveForWeb = new ExportOptionsSaveForWeb();
+
+                  exportOptionsSaveForWeb.format          = SaveDocumentType.JPEG;
+                  exportOptionsSaveForWeb.optimized       = false;
+                  exportOptionsSaveForWeb.quality         = 60;
+                  exportOptionsSaveForWeb.interlaced      = true;
+                  exportOptionsSaveForWeb.includeProfile  = false;
+                  exportOptionsSaveForWeb.blur            = 0;
+
+                  // Export options with arguments
+                  doc.exportDocument(output, ExportType.SAVEFORWEB, exportOptionsSaveForWeb); 
+
+                  // Remove duplicate layer
+                  duplicate.remove();
+              }
+                }
+            }
+          // Close the file outside ready to re-run loop to open the next file
+          doc.close(SaveOptions.DONOTSAVECHANGES);
         } 
-	}
+     }
 }
 
 catch (err) {
@@ -123,7 +158,7 @@ catch (err) {
 finally {
         // Brighten users day
         //alert("You're looking amazing today!");
-		// Restore application preferences
-		app.displayDialogs = startDisplayDialogs;
-		app.preferences.rulerUnits = startRulerUnits;	
+        // Restore application preferences
+        app.displayDialogs = startDisplayDialogs;
+        app.preferences.rulerUnits = startRulerUnits;   
     }
