@@ -1,6 +1,12 @@
 # Change Log
 
 
+13/01/16 - Added Hybris for loop and sub folder:
+===================================================
+- Created Hybris for loop (b) to select only the Hybris folder and then create a
+  sub folder for Hybris where we can make custom changes to the canvas size rather 
+  than image size for the rest of the sub folders
+
 
 08/01/16 - Re-wrote large parts of the application:
 ===================================================
