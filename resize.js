@@ -19,7 +19,7 @@ var folders = [
     'width' : 90,
     'height' : 90
   },
-  {   'name' : 'product',
+  { 'name' : 'product',
     'width' : 480,
     'height' : 480
   },
@@ -46,10 +46,9 @@ var folders = [
   { 'name' : 'sliver',
     'width' : 20,
     'height' : 20
-  }, 
-  {
-    'name' : 'Hybris', // Hybris Folder 
-    'width' : 2250,   // Billy Added 30/12/15
+  },
+  { 'name' : 'hybris',
+    'width' : 2250,
     'height' : 3000
   }
 ];
@@ -88,8 +87,7 @@ try {
         var fileName = fileList[i].name.toUpperCase().replace(/\..+$/, '');  
 
         // Removes suffix and sets folder name to file name.
-        var folder_nam
-        e = ""
+        var folder_name = ""
               if(fileName.indexOf('_') >= 0){
                    folder_name = fileName.toUpperCase().substring( 0, fileName.indexOf( "_" ) );
             } else {
@@ -107,7 +105,17 @@ try {
             throw new Error("Folder could not be created");
         } else {
             
-              for(var j = 0; j < folders.length; j++){
+              // Get only Hybris SubFolder
+              for(var b = 0; b < folders.length -9; b++){
+                
+                // Create Hybris Subfolder
+                var subFolder = new Folder(newFolder.toString( ) + "/" + folders[b].name);
+
+                // Create Hybris SubFolder if it doesn't exist
+                if(!subFolder.exists){ subFolder.create(); 
+              }
+
+              for(var j = 1; j < folders.length; j++){
                   // Create sub folder
                   var subFolder = new Folder(newFolder.toString( ) + "/" + folders[j].name);
 
@@ -154,7 +162,7 @@ try {
                       }
                   }
               }
-              // Close the file outside ready to re-run loop to open the next file
+              //Close the file outside ready to re-run loop to open the next file
               doc.close(SaveOptions.DONOTSAVECHANGES);
           } 
      }
