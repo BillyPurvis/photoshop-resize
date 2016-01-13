@@ -1,7 +1,5 @@
-// File Types
-var FILE_TYPE   = ".tif",
-    SEARCH_MASK = "*" + FILE_TYPE;
-
+var FILE_TYPE = ".tif"; // The type of files that this script works on -- you can change
+var SEARCH_MASK = "*" + FILE_TYPE; // Image file filter to find only those files
 
 // Save current dialog preferences
 var startDisplayDialogs = app.displayDialogs;
@@ -13,48 +11,60 @@ app.preferences.rulerUnits = Units.PIXELS;
 
 // Setup the array of folder names
 var folders = [
-    {   'name' : 'zoom',
-        'width' : 1500,
-        'height' : 1500
-    },
-    {   'name' : 'thumb',
-        'width' : 90,
-        'height' : 90
-    },
-    {   'name' : 'product',
-        'width' : 480,
-        'height' : 480
-    },
-    {   'name' : 'optional',
-        'width' : 60,
-        'height' : 60
-    },
-    {   'name' : 'medium',
-        'width' : 116,
-        'height' : 116
-    },
-    {   'name' : 'checkout_thumb',
-        'width' : 70,
-        'height' : 70
-    },
-    {   'name' : 'additional',
-        'width' : 230,
-        'height' : 230
-    },
-    {   'name' : 'marketing',
-        'width' : 2000,
-        'height' : 2000
-    },
-    {   'name' : 'sliver',
-        'width' : 20,
-        'height' : 20
-    },
+  { 'name' : 'zoom',
+    'width' : 1500,
+    'height' : 1500
+  },
+  { 'name' : 'thumb',
+    'width' : 90,
+    'height' : 90
+  },
+  {   'name' : 'product',
+    'width' : 480,
+    'height' : 480
+  },
+  { 'name' : 'optional',
+    'width' : 60,
+    'height' : 60
+  },
+  { 'name' : 'medium',
+    'width' : 116,
+    'height' : 116
+  },
+  { 'name' : 'checkout_thumb',
+    'width' : 70,
+    'height' : 70
+  },
+  { 'name' : 'additional',
+    'width' : 230,
+    'height' : 230
+  },
+  { 'name' : 'marketing',
+    'width' : 2000,
+    'height' : 2000
+  },
+  { 'name' : 'sliver',
+    'width' : 20,
+    'height' : 20
+  }, 
   {
-        'name': 'hybris',
-        'width': 2250,
-        'heigh': 3000
+    'name' : 'Hybris', // Hybris Folder 
+    'width' : 2250,   // Billy Added 30/12/15
+    'height' : 3000
   }
 ];
+
+
+function compare(a,b) {
+  if (a.height*a.width < b.height*b.width)
+     return 1;
+  if (a.height*a.width > b.height*b.width)
+    return -1;
+  return 0;
+}
+
+folders.sort(compare);
+
 
 
 try {
@@ -99,14 +109,14 @@ try {
             
               for(var j = 0; j < folders.length; j++){
                   // Create sub folder
-                  var subFolder = new Folder(newFolder + "/" + folders[j].name);
+                  var subFolder = new Folder(newFolder.toString( ) + "/" + folders[j].name);
 
                   // Create Sub Folder if it doesn't exist
                   if(!subFolder.exists){ subFolder.create(); }
 
                   // If sub folder wasn't created, throw err
                   if(!subFolder.exists){
-                      throw new Error("Something Happened");
+                      throw new Error("Could not create folder " + subFolder.toString( ));
                   } else {
                       // Open document
                       var doc = open(fileList[i]);
@@ -124,7 +134,7 @@ try {
                               duplicate.applyUnSharpMask(40,1,0);
 
                           // Export for web
-                          var output = new File(subFolder + "/" + fileName.toUpperCase() + '.jpg');
+                          var output = new File(subFolder.toString( ) + "/" + fileName.toUpperCase() + '.jpg');
 
                           // Create var for save Options
                           var exportOptionsSaveForWeb = new ExportOptionsSaveForWeb();
