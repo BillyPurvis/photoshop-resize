@@ -4,6 +4,7 @@
 ===================================================
 - Removed Hybris loop, pushing working to master, setting up new
   dev branch
+- Added Hybris loop and resizeCanvas
   
 
 

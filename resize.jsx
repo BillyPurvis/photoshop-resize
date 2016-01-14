@@ -105,15 +105,51 @@ try {
             throw new Error("Folder could not be created");
         } else {
             
-              // // Get only Hybris SubFolder
-              // for(var b = 0; b < folders.length -9; b++){
+              // Get only Hybris SubFolder
+              for(var b = 0; b < folders.length -9; b++){
                 
-              //   // Create Hybris Subfolder
-              //   var subFolder = new Folder(newFolder.toString( ) + "/" + folders[b].name);
+                // Create Hybris Subfolder
+                var subFolder = new Folder(newFolder.toString( ) + "/" + folders[b].name);
 
-              //   // Create Hybris SubFolder if it doesn't exist
-              //   if(!subFolder.exists){ subFolder.create(); 
-              // }
+                // Create Hybris SubFolder if it doesn't exist
+                if(!subFolder.exists){ subFolder.create(); }
+
+                // If subFolder not created, throw err
+                if(!subFolder.exists){
+                  throw new Error( subFolder.toString( ) + " could not be created.");
+                } else {
+                      var doc = open(fileList[i]);
+
+                      if(doc == null){
+                        throw new Error("Could not create folder " + subFolder.toString( ));
+                      } else {
+                        doc.resizeCanvas(folders[b].width, folders[b].height);
+                        doc.flatten();
+
+                        var duplicate = doc.activeLayer.duplicate();
+                            duplicate.applyUnSharpMask(40,1,0);
+
+                          // Export for web
+                          var output = new File(subFolder.toString( ) + "/" + fileName.toUpperCase() + '.jpg');
+
+                          // Create var for save Options
+                          var exportOptionsSaveForWeb = new ExportOptionsSaveForWeb();
+
+                          exportOptionsSaveForWeb.format          = SaveDocumentType.JPEG;
+                          exportOptionsSaveForWeb.optimized       = false;
+                          exportOptionsSaveForWeb.quality         = 60;
+                          exportOptionsSaveForWeb.interlaced      = true;
+                          exportOptionsSaveForWeb.includeProfile  = false;
+                          exportOptionsSaveForWeb.blur            = 0;
+
+                          // Export options with arguments
+                          doc.exportDocument(output, ExportType.SAVEFORWEB, exportOptionsSaveForWeb); 
+
+                          // Remove duplicate layer
+                          duplicate.remove();
+                      }
+                  }
+              }
 
               for(var j = 1; j < folders.length; j++){
                   // Create sub folder
