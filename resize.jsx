@@ -105,15 +105,15 @@ try {
             throw new Error("Folder could not be created");
         } else {
             
-              // Get only Hybris SubFolder
-              for(var b = 0; b < folders.length -9; b++){
+              // // Get only Hybris SubFolder
+              // for(var b = 0; b < folders.length -9; b++){
                 
-                // Create Hybris Subfolder
-                var subFolder = new Folder(newFolder.toString( ) + "/" + folders[b].name);
+              //   // Create Hybris Subfolder
+              //   var subFolder = new Folder(newFolder.toString( ) + "/" + folders[b].name);
 
-                // Create Hybris SubFolder if it doesn't exist
-                if(!subFolder.exists){ subFolder.create(); 
-              }
+              //   // Create Hybris SubFolder if it doesn't exist
+              //   if(!subFolder.exists){ subFolder.create(); 
+              // }
 
               for(var j = 1; j < folders.length; j++){
                   // Create sub folder

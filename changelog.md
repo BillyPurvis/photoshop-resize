@@ -1,5 +1,11 @@
 # Change Log
 
+14/01/16 - Added Hybris for loop and sub folder:
+===================================================
+- Removed Hybris loop, pushing working to master, setting up new
+  dev branch
+  
+
 
 13/01/16 - Added Hybris for loop and sub folder:
 ===================================================
