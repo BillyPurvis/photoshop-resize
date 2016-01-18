@@ -65,6 +65,35 @@ function compare(a,b) {
 folders.sort(compare);
 
 
+// Flatten and add unsharp
+function flattenDupe(){
+  doc.flatten();
+  var duplicate = doc.activeLayer.duplicate();
+  duplicate.applyUnSharpMask(40,1,0);
+}
+
+// Remove Unsharp
+function removeDupe () {
+  var duplicate = doc.activeLayer.duplicate();
+  duplicate.remove();
+}
+
+// Export Options
+function exportOpts(){
+  var exportOptionsSaveForWeb = new ExportOptionsSaveForWeb();
+
+  exportOptionsSaveForWeb.format          = SaveDocumentType.JPEG;
+  exportOptionsSaveForWeb.optimized       = false;
+  exportOptionsSaveForWeb.quality         = 60;
+  exportOptionsSaveForWeb.interlaced      = true;
+  exportOptionsSaveForWeb.includeProfile  = false;
+  exportOptionsSaveForWeb.blur            = 0;
+
+  // Export options with arguments
+  doc.exportDocument(output, ExportType.SAVEFORWEB, exportOptionsSaveForWeb); 
+  //}
+}
+
 
 try {
     // Ask for folder
@@ -104,7 +133,12 @@ try {
         if(!newFolder.exists){
             throw new Error("Folder could not be created");
         } else {
-            
+          // Rename _9 to folder_name + colorswatch for Hybris
+              if(fileName.substring(11,13) == "_9"){
+                var colorSwatch = "_colorswatch";
+                fileName = colorSwatch;
+                //fileName.toLowerCase();
+              }
               // Get only Hybris SubFolder
               for(var b = 0; b < folders.length -9; b++){
                 
@@ -122,79 +156,37 @@ try {
 
                       if(doc == null){
                         throw new Error("Could not create folder " + subFolder.toString( ));
-                      } else {
-                        doc.resizeCanvas(folders[b].width, folders[b].height);
-                        doc.flatten();
+                      } else if(fileName == colorSwatch){
 
-                        var duplicate = doc.activeLayer.duplicate();
-                            duplicate.applyUnSharpMask(40,1,0);
+                          // Resize Image
+                          doc.resizeImage(35,35);
+                          
+                          // Flatten and add unsharp
+                          flattenDupe();
+                          // Set Output File name
+                          var output = new File(subFolder.toString() + "/" + folder_name + colorSwatch.toLowerCase() + '.jpg');
 
-                          // Export for web
-                          var output = new File(subFolder.toString( ) + "/" + fileName.toUpperCase() + '.jpg');
-
-                          // Create var for save Options
-                          var exportOptionsSaveForWeb = new ExportOptionsSaveForWeb();
-
-                          exportOptionsSaveForWeb.format          = SaveDocumentType.JPEG;
-                          exportOptionsSaveForWeb.optimized       = false;
-                          exportOptionsSaveForWeb.quality         = 60;
-                          exportOptionsSaveForWeb.interlaced      = true;
-                          exportOptionsSaveForWeb.includeProfile  = false;
-                          exportOptionsSaveForWeb.blur            = 0;
-
-                          // Export options with arguments
-                          doc.exportDocument(output, ExportType.SAVEFORWEB, exportOptionsSaveForWeb); 
+                          // Set Export Options
+                          exportOpts();
 
                           // Remove duplicate layer
-                          duplicate.remove();
-                      }
-                  }
-              }
+                          removeDupe();
 
-              for(var j = 1; j < folders.length; j++){
-                  // Create sub folder
-                  var subFolder = new Folder(newFolder.toString( ) + "/" + folders[j].name);
-
-                  // Create Sub Folder if it doesn't exist
-                  if(!subFolder.exists){ subFolder.create(); }
-
-                  // If sub folder wasn't created, throw err
-                  if(!subFolder.exists){
-                      throw new Error("Could not create folder " + subFolder.toString( ));
-                  } else {
-                      // Open document
-                      var doc = open(fileList[i]);
-
-                      // Throw err if doc is bad
-                      if(doc == null){
-                        throw new Error(fileName + " Failed to properly open. Try again.");
                       } else {
-                          // Resize The image
-                          doc.resizeImage(folders[j].width, folders[j].height);
-                          doc.flatten();
+                            // Resize Canvas
+                            doc.resizeCanvas(folders[b].width, folders[b].height);
+                            
+                            // Flatten and unsharp
+                            flattenDupe();
 
-                          // Add UnSharpMask
-                          var duplicate = doc.activeLayer.duplicate();
-                              duplicate.applyUnSharpMask(40,1,0);
+                            // Set Output File Name
+                            var output = new File(subFolder.toString( ) + "/" + fileName.toUpperCase() + '.jpg');;
+                            
+                            // Export Options 
+                            exportOpts();
 
-                          // Export for web
-                          var output = new File(subFolder.toString( ) + "/" + fileName.toUpperCase() + '.jpg');
-
-                          // Create var for save Options
-                          var exportOptionsSaveForWeb = new ExportOptionsSaveForWeb();
-
-                          exportOptionsSaveForWeb.format          = SaveDocumentType.JPEG;
-                          exportOptionsSaveForWeb.optimized       = false;
-                          exportOptionsSaveForWeb.quality         = 60;
-                          exportOptionsSaveForWeb.interlaced      = true;
-                          exportOptionsSaveForWeb.includeProfile  = false;
-                          exportOptionsSaveForWeb.blur            = 0;
-
-                          // Export options with arguments
-                          doc.exportDocument(output, ExportType.SAVEFORWEB, exportOptionsSaveForWeb); 
-
-                          // Remove duplicate layer
-                          duplicate.remove();
+                            // Remove duplicate layer
+                            removeDupe();
                       }
                   }
               }
@@ -215,4 +207,4 @@ finally {
         // Restore application preferences
         app.displayDialogs = startDisplayDialogs;
         app.preferences.rulerUnits = startRulerUnits;   
-    }
+}

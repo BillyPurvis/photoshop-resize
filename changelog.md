@@ -1,5 +1,15 @@
 # Change Log
 
+
+18/01/16 - Refactored, added custom resizing for colorSwatch
+===================================================
+- Renamed colorswatch to SKU (folder_name) + colorswatch
+- Created functions for image Options and unsharp mask for
+  future use and cleaner code
+- Indented better
+- Removed resize.js and renamed to hybris-resize.jsx
+
+
 14/01/16 - Added Hybris for loop and sub folder:
 ===================================================
 - Removed Hybris loop, pushing working to master, setting up new
