@@ -1,5 +1,10 @@
 # Change Log
 
+22/02/16 - Longtime due an update
+====================================
+- Script creates a single parent folder of Hybris where all the images go
+  and no longer use the product code from the origin image file. The code
+  for that is commented out for future use.
 
 18/01/16 - Refactored, added custom resizing for colorSwatch
 ===================================================

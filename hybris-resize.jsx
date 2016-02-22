@@ -116,12 +116,7 @@ try {
         var fileName = fileList[i].name.toUpperCase().replace(/\..+$/, '');  
 
         // Removes suffix and sets folder name to file name.
-        var folder_name = ""
-              if(fileName.indexOf('_') >= 0){
-                   folder_name = fileName.toUpperCase().substring( 0, fileName.indexOf( "_" ) );
-            } else {
-                folder_name = fileName.toUpperCase();
-            }                   
+        var folder_name = "hybris";             
         // Create folder to contain output
         var newFolder = new Folder(folder_name);
 
@@ -135,7 +130,7 @@ try {
         } else {
           // Rename _9 to folder_name + colorswatch for Hybris
               if(fileName.substring(11,13) == "_9"){
-                var colorSwatch = "_colorswatch";
+                var colorSwatch = "_colourswatch";
                 fileName = colorSwatch;
                 //fileName.toLowerCase();
               }
@@ -143,19 +138,19 @@ try {
               for(var b = 0; b < folders.length -9; b++){
                 
                 // Create Hybris Subfolder
-                var subFolder = new Folder(newFolder.toString( ) + "/" + folders[b].name);
+                //var subFolder = new Folder(newFolder.toString( ) + "/" + folders[b].name);
 
                 // Create Hybris SubFolder if it doesn't exist
-                if(!subFolder.exists){ subFolder.create(); }
+                //if(!subFolder.exists){ subFolder.create(); }
 
                 // If subFolder not created, throw err
-                if(!subFolder.exists){
-                  throw new Error( subFolder.toString( ) + " could not be created.");
-                } else {
+                //if(!subFolder.exists){
+                  //throw new Error( subFolder.toString( ) + " could not be created.");
+                //} else {
                       var doc = open(fileList[i]);
 
                       if(doc == null){
-                        throw new Error("Could not create folder " + subFolder.toString( ));
+                          throw new Error("Could not create folder " + folder_name.toString( ));
                       } else if(fileName == colorSwatch){
 
                           // Resize Image
@@ -164,7 +159,7 @@ try {
                           // Flatten and add unsharp
                           flattenDupe();
                           // Set Output File name
-                          var output = new File(subFolder.toString() + "/" + folder_name + colorSwatch.toLowerCase() + '.jpg');
+                          var output = new File(folder_name.toString() + "/" + folder_name + colorSwatch.toLowerCase() + '.jpg');
 
                           // Set Export Options
                           exportOpts();
@@ -180,7 +175,7 @@ try {
                             flattenDupe();
 
                             // Set Output File Name
-                            var output = new File(subFolder.toString( ) + "/" + fileName.toUpperCase() + '.jpg');;
+                            var output = new File(folder_name.toString( ) + "/" + fileName.toUpperCase() + '.jpg');;
                             
                             // Export Options 
                             exportOpts();
@@ -188,12 +183,13 @@ try {
                             // Remove duplicate layer
                             removeDupe();
                       }
-                  }
-              }
+                  //}
+              //}
               //Close the file outside ready to re-run loop to open the next file
               doc.close(SaveOptions.DONOTSAVECHANGES);
           } 
      }
+  }
 }
 
 catch (err) {
